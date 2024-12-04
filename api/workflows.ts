@@ -10,10 +10,10 @@ export default class WorkflowAPI {
     return this.httpservice.get(url);
   }
 
-  public dispatch(id: number): Promise<IObject> {
+  public dispatch(id: number, body: Body): Promise<IObject> {
     const url = new URL(
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/actions/workflows/${id}/dispatches`
     );
-    return this.httpservice.post(url);
+    return this.httpservice.post(url, body);
   }
 }
