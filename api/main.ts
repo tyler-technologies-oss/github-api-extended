@@ -5,6 +5,8 @@ import AccountAPI from './accounts';
 import ReleaseAPI from './releases';
 import SecurityAPI from './security';
 import CommitAPI from './commits';
+import OrgAPI from './org';
+import TeamAPI from './teams';
 
 export default class GitHubAPI {
     public httpclient: HTTP;
@@ -15,6 +17,8 @@ export default class GitHubAPI {
     public releases: ReleaseAPI;
     public security: SecurityAPI;
     public commits: CommitAPI;
+    public org: OrgAPI;
+    public teams: TeamAPI;
     
     constructor(private config: IGitHubApi) {
         this.httpclient = new HTTP(this.config);
@@ -24,5 +28,7 @@ export default class GitHubAPI {
         this.releases = new ReleaseAPI(this.httpclient, this.config);
         this.security = new SecurityAPI(this.httpclient, this.config);
         this.commits = new CommitAPI(this.httpclient, this.config);
+        this.org = new OrgAPI(this.httpclient, this.config);
+        this.teams = new TeamAPI(this.httpclient, this.config);
     }
 }
