@@ -10,7 +10,6 @@ import TeamAPI from './teams';
 
 export default class GitHubAPI {
     public httpclient: HTTP;
-    
     public workflows: WorkflowAPI;
     public pullrequests: PullRequestAPI;
     public accounts: AccountAPI;

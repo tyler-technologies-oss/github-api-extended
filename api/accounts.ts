@@ -5,7 +5,6 @@ export default class AccountAPI {
 
   public get(username: string): Promise<IObject> {
     const url = new URL(`${this.config.url}/users/${username}`);
-    
     return this.httpservice.get(url);
   }
 }
