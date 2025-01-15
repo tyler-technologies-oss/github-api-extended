@@ -3,10 +3,13 @@ import HTTP from "./http";
 export default class ReleaseAPI {
   constructor(private httpservice: HTTP, public config: IGitHubApi) {}
 
-  public async getLatest(): Promise<IObject> {
+  public async getLatest(prerelease?: boolean): Promise<IObject> {
     const url = new URL(
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases`
     );
+
+    prerelease = prerelease || false;
+
     const response = await this.httpservice.get(url);
 
     // Sort by published date because github api may not return the latest release first due to string comparison
@@ -15,7 +18,7 @@ export default class ReleaseAPI {
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
     );
 
-    return releases[0];
+    return releases.find((r: IObject) => r.prerelease == prerelease);
   }
 
   public getByTag(tag: string): Promise<IObject> {
@@ -27,11 +30,14 @@ export default class ReleaseAPI {
 
   public async getLatestByTagPrefix(
     prefix: string,
-    prerelease: boolean
+    prerelease?: boolean
   ): Promise<IObject> {
     const url = new URL(
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases`
     );
+
+    prerelease = prerelease || false;
+
     const response = await this.httpservice.get(url);
     
     // Sort by published date because github api may not return the latest release first due to string comparison
