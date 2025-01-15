@@ -3,11 +3,19 @@ import HTTP from "./http";
 export default class ReleaseAPI {
   constructor(private httpservice: HTTP, public config: IGitHubApi) {}
 
-  public getLatest(): Promise<IObject> {
+  public async getLatest(): Promise<IObject> {
     const url = new URL(
-      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases/latest`
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases`
     );
-    return this.httpservice.get(url);
+    const response = await this.httpservice.get(url);
+
+    // Sort by published date because github api may not return the latest release first due to string comparison
+    const releases = response.data.sort(
+      (a: IObject, b: IObject) =>
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+
+    return releases[0];
   }
 
   public getByTag(tag: string): Promise<IObject> {
@@ -25,7 +33,13 @@ export default class ReleaseAPI {
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases`
     );
     const response = await this.httpservice.get(url);
-    const releases = response.data;
+    
+    // Sort by published date because github api may not return the latest release first due to string comparison
+    const releases = response.data.sort(
+      (a: IObject, b: IObject) =>
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+    
     return releases.find(
       (r: IObject) =>
         r.tag_name.startsWith(prefix) && r.prerelease == prerelease
