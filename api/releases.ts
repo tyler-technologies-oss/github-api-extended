@@ -159,4 +159,12 @@ export default class ReleaseAPI {
     }
     return this.delete(release.data.id);
   }
+
+  public async notes(tag: string): Promise<IObject> {
+    const url = new URL(
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases/tags/${tag}`
+    );
+    const response = await this.httpservice.get(url);
+    return response.data.body;
+  }
 }
