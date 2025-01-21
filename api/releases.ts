@@ -116,4 +116,47 @@ export default class ReleaseAPI {
     );
     return this.httpservice.post(url, release);
   }
+
+  public list(): Promise<IObject> {
+    let page = 1;
+    const releases: IObject[] = [];
+    const url = new URL(
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases`
+    );
+
+    return new Promise((resolve) => {
+      const fetch = async () => {
+        url.searchParams.set("page", page.toString());
+        const response = await this.httpservice.get(url);
+        if (response.data.length === 0) {
+          resolve(releases);
+        } else {
+          releases.push(...(response.data as IObject[]));
+          page++;
+          fetch();
+        }
+      };
+      fetch();
+    });
+  }
+
+  public async listByTagPrefix(prefix: string): Promise<IObject> {
+    const releases = await this.list();
+    return releases.filter((r: IObject) => r.tag_name.startsWith(prefix));
+  }
+
+  public delete(releaseId: number): Promise<IObject> {
+    const url = new URL(
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases/${releaseId}`
+    );
+    return this.httpservice.delete(url);
+  }
+
+  public async deleteByTag(tag: string): Promise<IObject> {
+    const release = await this.getByTag(tag) as IObject;
+    if (!release) {
+      throw new Error(`Release with tag ${tag} not found`);
+    }
+    return this.delete(release.data.id);
+  }
 }
