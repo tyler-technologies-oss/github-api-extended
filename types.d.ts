@@ -43,3 +43,15 @@ interface ICreateRelease {
   generate_release_notes?: boolean;
   make_latest?: string;
 }
+
+interface ICreateTag {
+  tag: string;
+  message: string;
+  object: string;
+  type: string;
+  tagger: {
+    name: string;
+    email: string;
+    date: string;
+  };
+}

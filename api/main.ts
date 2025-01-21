@@ -7,6 +7,7 @@ import SecurityAPI from './security';
 import CommitAPI from './commits';
 import OrgAPI from './org';
 import TeamAPI from './teams';
+import TagAPI from './tags';
 
 export default class GitHubAPI {
     public httpclient: HTTP;
@@ -18,6 +19,7 @@ export default class GitHubAPI {
     public commits: CommitAPI;
     public org: OrgAPI;
     public teams: TeamAPI;
+    public tags: TagAPI;
     
     constructor(private config: IGitHubApi) {
         this.httpclient = new HTTP(this.config);
@@ -29,5 +31,6 @@ export default class GitHubAPI {
         this.commits = new CommitAPI(this.httpclient, this.config);
         this.org = new OrgAPI(this.httpclient, this.config);
         this.teams = new TeamAPI(this.httpclient, this.config);
+        this.tags = new TagAPI(this.httpclient, this.config);
     }
 }
