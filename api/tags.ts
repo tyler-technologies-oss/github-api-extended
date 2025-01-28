@@ -29,21 +29,21 @@ export default class TagAPI {
 
     public create(tag: ICreateTag): Promise<IObject> {
         const url = new URL(
-            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/tags`
+            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/git/refs/tags`
         );
         return this.httpservice.post(url, tag);
     }
 
     public delete(tag: string): Promise<IObject> {
         const url = new URL(
-            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/tags/${tag}`
+            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/git/refs/tags/${tag}`
         );
         return this.httpservice.delete(url);
     }
 
     public get(tag: string): Promise<IObject> {
         const url = new URL(
-            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/tags/${tag}`
+            `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/git/refs/tags/${tag}`
         );
         return this.httpservice.get(url);
     }
