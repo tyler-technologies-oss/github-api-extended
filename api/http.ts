@@ -22,6 +22,7 @@ export default class HTTP {
     const headers = result.headers;
 
     if (!result.ok) {
+      console.log(url.toString());
       console.log(headers);
       throw new Error(`Error ${result.status}: ${data.message}`);
     }
