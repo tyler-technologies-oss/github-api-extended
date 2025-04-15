@@ -15,4 +15,12 @@ export default class CommitAPI {
   
     return this.httpservice.get(url);
   }
+
+  public async find(sha: string) {
+    const url = new URL(
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/commits/${sha}`
+    );
+
+    return this.httpservice.get(url);
+  }
 }
