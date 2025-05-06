@@ -9,7 +9,7 @@ import OrgAPI from './org';
 import TeamAPI from './teams';
 import TagAPI from './tags';
 import RatelimitAPI from './ratelimit';
-
+import RepoAPI from './repos';
 export default class GitHubAPI {
     public httpclient: HTTP;
     public workflows: WorkflowAPI;
@@ -21,6 +21,7 @@ export default class GitHubAPI {
     public org: OrgAPI;
     public teams: TeamAPI;
     public tags: TagAPI;
+    public repos: RepoAPI;
     public ratelimit: RatelimitAPI;
     
     constructor(private config: IGitHubApi) {
@@ -35,5 +36,6 @@ export default class GitHubAPI {
         this.teams = new TeamAPI(this.httpclient, this.config);
         this.tags = new TagAPI(this.httpclient, this.config);
         this.ratelimit = new RatelimitAPI(this.httpclient, this.config);
+        this.repos = new RepoAPI(this.httpclient, this.config);
     }
 }
