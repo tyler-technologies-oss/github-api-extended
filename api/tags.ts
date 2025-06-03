@@ -5,7 +5,7 @@ export default class TagAPI {
 
   public list(): Promise<IObject[]> {
     let page = 1;
-    let tags: IObject[] = [];
+    const tags: IObject[] = [];
 
     const url = new URL(
         `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/tags`
