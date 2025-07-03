@@ -12,7 +12,7 @@ export default class HTTP {
     url: URL,
     method: string,
     body?: IObject | string
-  ): Promise<{ data: IObject, headers: Headers }> {
+  ): Promise<{ data: IObject | undefined, headers: Headers, error?: object }> {
     const result = await fetch(url.toString(), {
       method: method,
       headers: this.headers,
@@ -22,31 +22,37 @@ export default class HTTP {
     const headers = result.headers;
 
     if (!result.ok) {
-      console.log(url.toString());
-      console.log(headers);
-      throw new Error(`Error ${result.status}: ${data.message}`);
+      console.log(`Error ${result.status}: ${data.message}`);
+      return {
+        error: {
+          status: result.status,
+          message: data.message || "An error occurred",
+        },
+        headers: new Headers(),
+        data: undefined,
+      };
     }
 
     return { data, headers };
   }
 
-  public get(url: URL): Promise<{ data: IObject, headers: Headers }> {
+  public get(url: URL): Promise<{ data: IObject | undefined, headers: Headers }> {
     return this.request(url, "GET");
   }
 
-  public post(url: URL, body?: IObject): Promise<{ data: IObject, headers: Headers }> {
+  public post(url: URL, body?: IObject): Promise<{ data: IObject | undefined, headers: Headers }> {
     return this.request(url, "POST", body);
   }
 
-  public put(url: URL, body?: string): Promise<{ data: IObject, headers: Headers }> {
+  public put(url: URL, body?: string): Promise<{ data: IObject | undefined, headers: Headers }> {
     return this.request(url, "PUT", body);
   }
 
-  public delete(url: URL): Promise<{ data: IObject, headers: Headers }> {
+  public delete(url: URL): Promise<{ data: IObject | undefined, headers: Headers }> {
     return this.request(url, "DELETE");
   }
 
-  public patch(url: URL, body?: IObject): Promise<{ data: IObject, headers: Headers }> {
+  public patch(url: URL, body?: IObject): Promise<{ data: IObject | undefined, headers: Headers }> {
     return this.request(url, "PATCH", body);
   }
 }

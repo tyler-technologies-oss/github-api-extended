@@ -10,6 +10,8 @@ import TeamAPI from './teams';
 import TagAPI from './tags';
 import RatelimitAPI from './ratelimit';
 import RepoAPI from './repos';
+import BranchAPI from './branches';
+
 export default class GitHubAPI {
     public httpclient: HTTP;
     public workflows: WorkflowAPI;
@@ -23,6 +25,7 @@ export default class GitHubAPI {
     public tags: TagAPI;
     public repos: RepoAPI;
     public ratelimit: RatelimitAPI;
+    public branches: BranchAPI;
     
     constructor(private config: IGitHubApi) {
         this.httpclient = new HTTP(this.config);
@@ -37,5 +40,6 @@ export default class GitHubAPI {
         this.tags = new TagAPI(this.httpclient, this.config);
         this.ratelimit = new RatelimitAPI(this.httpclient, this.config);
         this.repos = new RepoAPI(this.httpclient, this.config);
+        this.branches = new BranchAPI(this.httpclient, this.config);
     }
 }

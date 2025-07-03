@@ -15,7 +15,7 @@ export default class TagAPI {
             const fetch = async () => {
               url.searchParams.set("page", page.toString());
                 const response = await this.httpservice.get(url);
-                if (response.data.length === 0) {
+                if (response?.data?.length === 0) {
                     resolve(tags);
                 } else {
                     tags.push(...(response.data as IObject[]));
