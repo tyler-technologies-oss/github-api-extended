@@ -80,15 +80,15 @@ export default class ReleaseAPI {
   }
 
   public searchNotes(regex: RegExp, compare: IObject): string[] {
-    const results = compare.commits
-      .map((commit: IObject) => commit.commit.message.match(regex))
+    const results = compare?.commits
+      ?.map((commit: IObject) => commit?.commit?.message?.match(regex))
       .flat()
       .filter(Boolean)
       .sort()
       .filter(
         (item: string, index: number, arr: string[]) =>
           arr.indexOf(item) === index
-      );
+      ) || [];
     return results;
   }
 
