@@ -7,7 +7,9 @@ export default class WorkflowAPI {
     const url = new URL(
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/actions/workflows`
     );
-    return this.httpservice.get(url);
+    const data = this.httpservice.get(url);
+    const workflows = (data as any).workflows;
+    return workflows;
   }
 
   public dispatch(id: number, body?: Body): Promise<IObject> {
