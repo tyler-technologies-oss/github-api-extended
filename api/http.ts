@@ -18,7 +18,10 @@ export default class HTTP {
       headers: this.headers,
       body: body ? JSON.stringify(body) : undefined,
     });
-    const data = await result.json();
+    const contentType = result.headers.get('content-type');
+    const data = contentType?.includes('application/json') 
+      ? await result.json() 
+      : await result.text();
     const headers = result.headers;
 
     if (!result.ok) {
@@ -36,7 +39,7 @@ export default class HTTP {
     return { data, headers };
   }
 
-  public get(url: URL): Promise<{ data: IObject | undefined, headers: Headers }> {
+  public get(url: URL): Promise<{ data: IObject | string | undefined, headers: Headers }> {
     return this.request(url, "GET");
   }
 

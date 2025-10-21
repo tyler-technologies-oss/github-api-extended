@@ -9,7 +9,9 @@ export default class WorkflowAPI {
     );
 
     const response = await this.httpservice.get(url);
-    const workflows =  response?.data?.workflows || [];
+    const workflows = (response?.data && typeof response.data === 'object' && 'workflows' in response.data) 
+      ? response.data.workflows || [] 
+      : [];
     // Remove Dependabot Updates workflow or ones that have no content
     return workflows.filter((wf: IObject) => wf.name !== "Dependabot Updates" && wf.content?.trim() !== "");
   }
@@ -19,7 +21,9 @@ export default class WorkflowAPI {
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/contents/${path}`
     );
     const response = await this.httpservice.get(url);
-    return response?.data || [];
+    return (response?.data && typeof response.data === 'object' && !Array.isArray(response.data)) 
+      ? response.data as IObject 
+      : {} as IObject;
   }
 
   public dispatch(id: number, body?: Body): Promise<IObject> {
@@ -34,7 +38,9 @@ export default class WorkflowAPI {
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/actions/workflows/${id}/runs`
     );
     const result = await this.httpservice.get(url);
-    let workflows =  result?.data?.workflow_runs || [];
+    let workflows = (result?.data && typeof result.data === 'object' && 'workflow_runs' in result.data) 
+      ? result.data.workflow_runs || [] 
+      : [];
 
     // Filter by status if provided
     if (status) {
@@ -55,10 +61,58 @@ export default class WorkflowAPI {
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/actions/runs/${runId}/jobs`
     );
     const result = await this.httpservice.get(url);
+    const jobs = (result?.data && typeof result.data === 'object' && 'jobs' in result.data) 
+      ? result.data.jobs || [] 
+      : [];
     // Filter by status if provided
     if (status) {
-      return result?.data?.jobs.filter((job: IObject) => job.conclusion === status.valueOf()) || [];
+      return jobs.filter((job: IObject) => job.conclusion === status.valueOf()) || [];
     }
-    return result?.data?.jobs || [];
+    return jobs;
+  }
+
+  public async viewJobLogs(jobId: number): Promise<any> {
+    const url = new URL(
+      `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/actions/jobs/${jobId}/logs`
+    );
+
+    try {
+      const response = await this.httpservice.get(url);
+      const data = response?.data;
+
+      if (typeof data === 'string') {
+        // Check for expired logs or request errors
+        if (data.includes('Error: There was a problem with your request') ||
+            data.includes('ETIMEDOUT')) {
+          return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
+        }
+
+        const errorIndex = data.indexOf('##[error]');
+        if (errorIndex !== -1) {
+          const cleanupIndex = data.indexOf('Post job cleanup.', errorIndex);
+          const endIndex = cleanupIndex !== -1 ? cleanupIndex : data.length;
+
+          let errorSection = data.slice(errorIndex, endIndex);
+          errorSection = errorSection.replace('##[error]', '');
+          errorSection = errorSection.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s*/g, '');
+          errorSection = errorSection.trim();
+          return errorSection || 'Error details not available.';
+        }
+      }
+
+      return response?.data;
+    } catch (error: any) {
+      // Handle network timeouts and other errors
+      if (error?.code === 'ETIMEDOUT' || error?.message?.includes('ETIMEDOUT')) {
+        return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
+      }
+
+      if (error?.message?.includes('There was a problem with your request')) {
+        return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
+      }
+
+      // Generic error handling
+      return `Failed to fetch logs: ${error?.message || 'Unknown error occurred.'}`;
+    }
   }
 }

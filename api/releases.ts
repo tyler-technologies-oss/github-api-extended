@@ -13,10 +13,10 @@ export default class ReleaseAPI {
     const response = await this.httpservice.get(url);
 
     // Sort by published date because github api may not return the latest release first due to string comparison
-    const releases = response?.data?.sort(
+    const releases = Array.isArray(response?.data) ? response.data.sort(
       (a: IObject, b: IObject) =>
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    );
+    ) : [];
 
     return releases?.find((r: IObject) => r.prerelease == prerelease);
   }
@@ -41,10 +41,10 @@ export default class ReleaseAPI {
     const response = await this.httpservice.get(url);
     
     // Sort by published date because github api may not return the latest release first due to string comparison
-    const releases = response?.data?.sort(
+    const releases = Array.isArray(response?.data) ? response.data.sort(
       (a: IObject, b: IObject) =>
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    );
+    ) : [];
     
     return releases.find(
       (r: IObject) =>
@@ -165,6 +165,6 @@ export default class ReleaseAPI {
       `${this.config.url}/repos/${this.config.repository?.owner}/${this.config.repository?.name}/releases/tags/${tag}`
     );
     const response = await this.httpservice.get(url);
-    return response?.data?.body;
+    return (response?.data as IObject)?.body;
   }
 }
