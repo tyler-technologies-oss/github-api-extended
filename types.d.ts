@@ -55,3 +55,7 @@ interface ICreateTag {
     date: string;
   };
 }
+
+interface IWorkflowStatus extends String {
+  valueOf(): "failure" | "success" | "cancelled";
+}
