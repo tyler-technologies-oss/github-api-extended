@@ -83,7 +83,6 @@ export default class WorkflowAPI {
       if (typeof data === 'string') {
         // Check for expired logs or request errors
         if (data.includes('ETIMEDOUT')) {
-              console.log(data);
           return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
         }
 
