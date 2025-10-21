@@ -82,8 +82,8 @@ export default class WorkflowAPI {
 
       if (typeof data === 'string') {
         // Check for expired logs or request errors
-        if (data.includes('Error: There was a problem with your request') ||
-            data.includes('ETIMEDOUT')) {
+        if (data.includes('ETIMEDOUT')) {
+              console.log(data);
           return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
         }
 
@@ -104,10 +104,6 @@ export default class WorkflowAPI {
     } catch (error: any) {
       // Handle network timeouts and other errors
       if (error?.code === 'ETIMEDOUT' || error?.message?.includes('ETIMEDOUT')) {
-        return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
-      }
-
-      if (error?.message?.includes('There was a problem with your request')) {
         return 'Logs are no longer available. GitHub Actions logs expire after a certain period.';
       }
 
