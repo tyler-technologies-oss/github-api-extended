@@ -93,8 +93,12 @@ export default class WorkflowAPI {
           const endIndex = cleanupIndex !== -1 ? cleanupIndex : data.length;
 
           let errorSection = data.slice(errorIndex, endIndex);
-          errorSection = errorSection.replace('##[error]', '');
+
+          // Remove timestamps (format: YYYY-MM-DDTHH:MM:SS.NNNNNNNZ)
           errorSection = errorSection.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s*/g, '');
+
+          errorSection = errorSection.replace(`##[error]`, '');
+
           errorSection = errorSection.trim();
           return errorSection || 'Error details not available.';
         }
