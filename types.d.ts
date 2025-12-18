@@ -27,7 +27,6 @@ interface IUpdateRelease {
   make_latest: string;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface IObject {
   [key: string]: any;
 }
@@ -56,6 +55,6 @@ interface ICreateTag {
   };
 }
 
-interface IWorkflowStatus extends String {
+interface IWorkflowStatus extends string {
   valueOf(): "failure" | "success" | "cancelled";
 }

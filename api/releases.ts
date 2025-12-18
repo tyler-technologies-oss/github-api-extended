@@ -93,7 +93,6 @@ export default class ReleaseAPI {
   }
 
   public sortNotes(issues: string[]): string[] {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
     const filtered = issues.reduce((acc: any, curr: string) => {
       const key = curr.split("-")[0];
       acc[key] = acc[key] || [];
